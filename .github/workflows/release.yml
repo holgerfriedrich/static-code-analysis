@@ -75,8 +75,11 @@ jobs:
         mvn help:evaluate -Dexpression=project.version -q -DforceStdout
     
     - name: Build without tests
-      run: mvn clean compile -DskipTests=true -DskipChecks=true
+      run: mvn clean compile -DskipTests=true -DskipChecks=true    
     
+    - name: Target Folder
+      run: find . -type f
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
