@@ -61,7 +61,7 @@ jobs:
     - name: Update parent POM versions in modules
       run: |
         # Update parent version in all child POMs
-        for pom in $(find . -name pom.xml -not -path "*/target/*"); do
+        for pom in $(find . -name pom.xml -not -path "*/target/*" -not -path "*/src/test/resources/*"); do
           if [ -f "$pom" ]; then
             echo "Updating parent version in $pom"
             mvn versions:update-parent -DparentVersion=${{ github.event.inputs.release_version }} -f "$pom"
@@ -235,6 +235,7 @@ jobs:
         prerelease: false
 
   check-central-deployment:
+    if: ${{ github.event.inputs.dryrun != 'true' }}
     name: Verify Maven Central Deployment
     needs: release
     runs-on: ubuntu-latest
