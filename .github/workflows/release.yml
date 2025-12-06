@@ -54,6 +54,7 @@ jobs:
     
     - name: Update version to release version
       run: |
+        echo "Updating version to ${{ github.event.inputs.release_version }}"
         mvn versions:set -DnewVersion=${{ github.event.inputs.release_version }}
         mvn versions:commit
     
@@ -62,6 +63,7 @@ jobs:
         # Update parent version in all child POMs
         for pom in $(find . -name pom.xml -not -path "*/target/*"); do
           if [ -f "$pom" ]; then
+            echo "Updating parent version in $pom"
             mvn versions:update-parent -DparentVersion=${{ github.event.inputs.release_version }} -f "$pom"
             mvn versions:commit -f "$pom"
           fi
