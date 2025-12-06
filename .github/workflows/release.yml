@@ -231,7 +231,7 @@ jobs:
     
     - name: Upload build artifacts
       if: always() # execute even if deploy fails
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: release-artifacts-${{ github.event.inputs.release_version }}
         path: |
