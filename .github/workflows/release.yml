@@ -77,18 +77,6 @@ jobs:
     - name: Build without tests
       run: mvn clean compile -DskipTests=true -DskipChecks=true    
     
-    - name: Target Folder
-      run: find . -type f
-
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: release-artifacts-${{ github.event.inputs.release_version }}
-        path: |
-          **/target/*.jar
-          **/target/*.pom
-        retention-days: 30
-    
     - name: Deploy to Maven Central
       if: ${{ github.event.inputs.dryrun != 'true' }}
       id: maven-deploy
@@ -99,7 +87,21 @@ jobs:
       run: |
         # Fail fast: If this step fails, no git operations will occur
         mvn -DskipTests=true -DskipChecks=true -DperformRelease=true clean deploy
+      
+    - name: Target Folder
+      if: always() # execute even if deploy fails
+      run: find . -type f
     
+    - name: Upload build artifacts
+      if: always() # execute even if deploy fails
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-artifacts-${{ github.event.inputs.release_version }}
+        path: |
+          **/target/*.jar
+          **/target/*.pom
+        retention-days: 30
+
     - name: Trigger Central Publisher Portal Upload
       if: ${{ github.event.inputs.dryrun != 'true' }}
       env:
